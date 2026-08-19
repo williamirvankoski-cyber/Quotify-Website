@@ -1,0 +1,12 @@
+# Skräpfiler från operativsystemet
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Redigerare
+.vscode/
+.idea/
+
+# Om ett byggsteg läggs till senare
+node_modules/
+.env
