@@ -178,3 +178,20 @@
   a { color: #1C1A19; text-decoration: none; cursor: pointer; }
   a:hover { color: #A83F28; }
   input, textarea, select { font-family: Karla, system-ui, sans-serif; }
+
+/* Hovereffekter — låg i canvas-attributet style-hover innan sajten packades upp */
+.hv-border-ink, .hv-coral-on, .hv-coral, .hv-paper, .hv-border-white {
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+.hv-border-ink:hover   { border-color: #1C1A19; }
+.hv-coral-on:hover     { background: #E2553C; color: #fff; }
+.hv-coral:hover        { background: #E2553C; }
+.hv-paper:hover        { background: #FAF7F5; }
+.hv-border-white:hover { border-color: #fff; }
+
+/* Språkväljaren i navigeringen */
+.lang-switch { display: inline-flex; align-items: center; gap: 7px; font-family: Archivo, sans-serif;
+  font-weight: 600; font-size: 14px; color: #6E6560; padding: 10px 15px; border-radius: 999px;
+  border: 1.5px solid #F2EBE8; transition: border-color .18s ease, color .18s ease; }
+.lang-switch:hover { border-color: #1C1A19; color: #1C1A19; }
+.lang-switch svg { flex: none; }
