@@ -13,6 +13,11 @@ const SUPABASE_URL = "https://nhxnafohgcedrjykahhh.supabase.co";
 // sitter i databasens RLS-regler, inte i att nyckeln är hemlig.
 const SUPABASE_ANON_KEY = "sb_publishable_lr9e7kMeYIWx47R6-834DQ_LyQQGoCg";
 
+// Fånga adressen INNAN klienten skapas. supabase-js plockar bort nyckeln ur
+// fragmentet så fort den startar, så läser vi window.location senare är den
+// redan borta — och då ser en lyckad Google-inloggning ut som ingen alls.
+const _adressVidStart = (window.location.hash || "") + (window.location.search || "");
+
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ---------- språk ---------- */
@@ -193,10 +198,10 @@ async function loggaInMedLeverantor(leverantor) {
 // Kommer användaren tillbaka från en avbruten inloggning ligger felet i
 // adressen, antingen som ?error=... eller #error=...
 function oauthFelFranUrl() {
-  const fran = (s) => new URLSearchParams(s.replace(/^[?#]/, ""));
-  for (const del of [window.location.search, window.location.hash]) {
+  // Samma sak här: felet kan ligga i fragmentet, som biblioteket redan städat.
+  for (const del of _adressVidStart.split(/(?=[?#])/)) {
     if (!del) continue;
-    const p = fran(del);
+    const p = new URLSearchParams(del.replace(/^[?#]/, ""));
     const fel = p.get("error_description") || p.get("error");
     if (fel) return decodeURIComponent(fel).replace(/\+/g, " ");
   }
@@ -223,13 +228,54 @@ async function nuvarandeAnvandare() {
   return data.session ? data.session.user : null;
 }
 
+// Kommer man direkt tillbaka från Google eller Microsoft ligger nyckeln i
+// adressens fragment, och biblioteket behöver ett kort ögonblick på sig att
+// byta den mot en session. Frågar vi för tidigt ser det ut som att
+// inloggningen misslyckades.
+function komFranInloggning() {
+  return /access_token|refresh_token|[?&#]code=/.test(_adressVidStart);
+}
+
+function vantaPaSession(maxMs = 5000) {
+  return new Promise((klar) => {
+    const start = Date.now();
+    const { data: prenumeration } = db.auth.onAuthStateChange((_, session) => {
+      if (session) {
+        prenumeration.subscription.unsubscribe();
+        klar(session.user);
+      }
+    });
+    // Bältet och hängslena: händelsen kan ha hunnit passera innan vi lyssnade.
+    (async function polla() {
+      const anv = await nuvarandeAnvandare();
+      if (anv) {
+        prenumeration.subscription.unsubscribe();
+        return klar(anv);
+      }
+      if (Date.now() - start > maxMs) {
+        prenumeration.subscription.unsubscribe();
+        return klar(null);
+      }
+      setTimeout(polla, 150);
+    })();
+  });
+}
+
 // Läggs överst på sidor som kräver inloggning.
 async function kravInloggning() {
-  const anv = await nuvarandeAnvandare();
+  let anv = await nuvarandeAnvandare();
+
+  if (!anv && komFranInloggning()) anv = await vantaPaSession();
+
   if (!anv) {
     const nu = window.location.pathname.split("/").pop() || "dashboard.html";
     window.location.replace(absolutUrl("login.html") + "?next=" + encodeURIComponent(nu));
     return null;
+  }
+
+  // Städa bort nycklarna ur adressfältet när de väl är sparade.
+  if (window.location.hash && /access_token|refresh_token/.test(window.location.hash)) {
+    history.replaceState({}, "", window.location.pathname);
   }
   return anv;
 }
