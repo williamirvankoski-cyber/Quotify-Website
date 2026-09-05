@@ -20,7 +20,8 @@ Svenska är standard och ligger i roten. Engelska ligger i `en/`.
 | `about.html` | `en/about.html` | Om oss |
 | `contact.html` | `en/contact.html` | Kontakt |
 | `signup.html` | `en/signup.html` | Prova gratis |
-| `dashboard.html` | `en/dashboard.html` | Inloggad vy (design, inte kopplad än) |
+| `login.html` | `en/login.html` | Logga in |
+| `dashboard.html` | `en/dashboard.html` | Inloggad vy, hämtar riktiga offerter |
 
 Filnamnen är avsiktligt identiska i båda språken. Det gör språkväljaren enkel:
 den byter bara mapp och behåller sidan man står på.
@@ -60,10 +61,12 @@ hämtar ingenting utifrån.
 
 - **Mejl och lösenord** fungerar redan. Vilken giltig adress som helst duger,
   oavsett domän — gmail, hotmail, outlook, egen företagsdomän, plus-taggar.
-- **Google och Microsoft** finns som knappar men är avstängda i Supabase.
-  Koden frågar först vilka leverantörer som är påslagna och säger till i
-  klartext, i stället för att skicka användaren till en felsida. Slå på dem
-  under Authentication → Providers.
+- **Google** är påslagen och fungerar. **Microsoft** är avstängd — den väntar
+  tills en kund frågar efter den, eftersom Outlook- och Hotmail-adresser redan
+  kan registrera sig med mejl och lösenord. Koden frågar först vilka
+  leverantörer som är påslagna och säger till i klartext, i stället för att
+  skicka användaren till en felsida. Slå på fler under Authentication →
+  Providers.
 - `dashboard.html` kräver inloggning och skickar tillbaka till `login.html`
   med `?next=` om man inte är inloggad.
 - **Kom ihåg mig** vid inloggningen avgör var sessionen sparas: ikryssad ger
@@ -89,8 +92,10 @@ på alla sidor. Den här mappen innehåller den uppackade, publicerbara versione
 - [ ] Priserna 249 / 649 / 1 490 kr är platshållare — byt till riktiga siffror
 - [x] Registrering och inloggning fungerar (Supabase Auth) — se avsnittet Inloggning
 - [ ] Kontaktformuläret skickar fortfarande ingenting
-- [ ] Google- och Microsoft-inloggning kräver att leverantörerna slås på i Supabase
-- [ ] `dashboard.html` är en designskiss, inte kopplad till Supabase
+- [x] Google-inloggning fungerar; Microsoft väntar tills någon frågar efter den
+- [x] `dashboard.html` hämtar riktiga offerter — exempeldatan är borttagen
+- [ ] Två siffror på översikten visar streck, de saknar datakälla:
+      "skickade denna månad" och katalogens storlek
 - [ ] Byt `© 2026 Quotify AB · Stockholm` till rätt uppgifter innan lansering
 - [ ] Exempeloffertet genom hela sajten är en badrumsrenovering. Det fungerar som
       exempel, men om målgruppen ska kännas bredare än bygg kan det bytas mot
