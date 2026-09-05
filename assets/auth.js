@@ -18,7 +18,61 @@ const SUPABASE_ANON_KEY = "sb_publishable_lr9e7kMeYIWx47R6-834DQ_LyQQGoCg";
 // redan borta — och då ser en lyckad Google-inloggning ut som ingen alls.
 const _adressVidStart = (window.location.hash || "") + (window.location.search || "");
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Sessionen sparas i sessionStorage, inte localStorage. Skillnaden är precis
+// den vi vill ha: den överlever att man klickar runt på sajten, men försvinner
+// när fliken stängs. (Nackdel: öppnar man sajten i en NY flik är man utloggad
+// där, eftersom sessionStorage är privat per flik.)
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    storage: window.sessionStorage,
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+});
+
+/* ---------- automatisk utloggning vid inaktivitet ---------- */
+
+const INAKTIV_GRANS_MS = 20 * 60 * 1000; // 20 minuter
+const AKTIVITETSNYCKEL = "quotify_senaste_aktivitet";
+
+function noteraAktivitet() {
+  try {
+    sessionStorage.setItem(AKTIVITETSNYCKEL, String(Date.now()));
+  } catch (e) {
+    /* privat läge eller blockerad lagring — då får tiden räknas från sidladdning */
+  }
+}
+
+function inaktivForLange() {
+  try {
+    const senast = Number(sessionStorage.getItem(AKTIVITETSNYCKEL) || 0);
+    return senast > 0 && Date.now() - senast > INAKTIV_GRANS_MS;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Klick, tangenttryck, scroll och musrörelser räknas som liv. Att bara ha
+// sidan öppen gör det inte — då ska de 20 minuterna löpa ut.
+function startaInaktivitetsvakt() {
+  noteraAktivitet();
+  const handelser = ["click", "keydown", "scroll", "mousemove", "touchstart", "focus"];
+  let strypt = 0;
+  const pa = () => {
+    const nu = Date.now();
+    if (nu - strypt < 5000) return; // skriv inte till lagringen vid varje musrörelse
+    strypt = nu;
+    noteraAktivitet();
+  };
+  handelser.forEach((h) => window.addEventListener(h, pa, { passive: true }));
+
+  setInterval(async () => {
+    if (!inaktivForLange()) return;
+    const anv = await nuvarandeAnvandare();
+    if (anv) await loggaUt();
+  }, 30000);
+}
 
 /* ---------- språk ---------- */
 
@@ -210,12 +264,56 @@ function oauthFelFranUrl() {
 
 // Visar ett sådant fel utan att sidan behöver göra något själv, och städar
 // bort det ur adressfältet så en omladdning inte visar det igen.
-document.addEventListener("DOMContentLoaded", () => {
+/* ---------- menyn ska visa om man är inloggad ---------- */
+
+// Utan detta står det "Logga in" i menyn på varje sida utom översikten, även
+// när man är inloggad. Det ser ut som att man loggats ut så fort man klickar
+// på logotypen eller en kategori — fast sessionen ligger kvar.
+async function uppdateraNav() {
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+
+  const loggaIn = nav.querySelector('a[href$="login.html"]');
+  const provaGratis = nav.querySelector('a[href$="signup.html"]');
+  if (!loggaIn && !provaGratis) return;
+
+  const anv = await nuvarandeAnvandare();
+  if (!anv) return; // utloggad: menyn är redan rätt
+
+  if (loggaIn) {
+    loggaIn.textContent = SV ? "Översikt" : "Dashboard";
+    loggaIn.setAttribute("href", loggaIn.getAttribute("href").replace("login.html", "dashboard.html"));
+  }
+
+  if (provaGratis) {
+    provaGratis.textContent = SV ? "Logga ut" : "Log out";
+    provaGratis.setAttribute("href", "#");
+    provaGratis.addEventListener("click", (e) => {
+      e.preventDefault();
+      loggaUt();
+    });
+  }
+}
+
+/* ---------- start ---------- */
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // Fel som Google eller Microsoft skickat tillbaka i adressen
   const fel = oauthFelFranUrl();
-  if (!fel) return;
-  const ruta = document.getElementById("besked") || document.getElementById("besked-signup");
-  if (ruta) visaBesked(ruta, fel, "fel");
-  history.replaceState({}, "", window.location.pathname);
+  if (fel) {
+    const ruta = document.getElementById("besked") || document.getElementById("besked-signup");
+    if (ruta) visaBesked(ruta, fel, "fel");
+    history.replaceState({}, "", window.location.pathname);
+  }
+
+  // Har fliken legat orörd för länge sedan förra sidan? Ut direkt.
+  if (inaktivForLange() && (await nuvarandeAnvandare())) {
+    await loggaUt();
+    return;
+  }
+
+  startaInaktivitetsvakt();
+  uppdateraNav();
 });
 
 async function loggaUt() {
