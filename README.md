@@ -54,16 +54,24 @@ Priserna finns på tre ställen per språk som måste stämma överens:
 
 ## Inloggning
 
- och  är kopplade till Supabase Auth via
-. Biblioteket ligger lokalt i , så sidan
+`login.html` och `signup.html` är kopplade till Supabase Auth via
+`assets/auth.js`. Biblioteket ligger lokalt i `assets/supabase.js`, så sidan
 hämtar ingenting utifrån.
 
 - **Mejl och lösenord** fungerar redan. Vilken giltig adress som helst duger,
-  oavsett domän.
+  oavsett domän — gmail, hotmail, outlook, egen företagsdomän, plus-taggar.
 - **Google och Microsoft** finns som knappar men är avstängda i Supabase.
-  Knapparna säger till om det i klartext i stället för att leda till en
-  felsida. Slå på dem under Authentication → Providers.
--  kräver inloggning och skickar tillbaka till   med  om man inte är inloggad.
+  Koden frågar först vilka leverantörer som är påslagna och säger till i
+  klartext, i stället för att skicka användaren till en felsida. Slå på dem
+  under Authentication → Providers.
+- `dashboard.html` kräver inloggning och skickar tillbaka till `login.html`
+  med `?next=` om man inte är inloggad.
+- Nya konton måste bekräfta sin mejladress. Supabases inbyggda utskick är
+  hårt begränsat och bara till för test — koppla en egen SMTP-leverantör
+  under Authentication → Emails innan riktiga kunder registrerar sig.
+
+Sidorna finns i båda språken. Ändrar du en text måste du ändra den på båda
+ställena, precis som för resten av sajten.
 
 ## Var designen kommer ifrån
 
