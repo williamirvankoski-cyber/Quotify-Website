@@ -52,6 +52,19 @@ Priserna finns på tre ställen per språk som måste stämma överens:
 2. skriptet längst ned i samma fil (siffrorna för månad och år)
 3. prisrutan på startsidan
 
+## Inloggning
+
+ och  är kopplade till Supabase Auth via
+. Biblioteket ligger lokalt i , så sidan
+hämtar ingenting utifrån.
+
+- **Mejl och lösenord** fungerar redan. Vilken giltig adress som helst duger,
+  oavsett domän.
+- **Google och Microsoft** finns som knappar men är avstängda i Supabase.
+  Knapparna säger till om det i klartext i stället för att leda till en
+  felsida. Slå på dem under Authentication → Providers.
+-  kräver inloggning och skickar tillbaka till   med  om man inte är inloggad.
+
 ## Var designen kommer ifrån
 
 Designen gjordes i Claude Design. Originalet ligger i mappen
@@ -62,7 +75,9 @@ på alla sidor. Den här mappen innehåller den uppackade, publicerbara versione
 ## Att göra
 
 - [ ] Priserna 249 / 649 / 1 490 kr är platshållare — byt till riktiga siffror
-- [ ] Kontaktformuläret och registreringsformuläret ser ut att fungera men skickar ingenting än
+- [x] Registrering och inloggning fungerar (Supabase Auth) — se avsnittet Inloggning
+- [ ] Kontaktformuläret skickar fortfarande ingenting
+- [ ] Google- och Microsoft-inloggning kräver att leverantörerna slås på i Supabase
 - [ ] `dashboard.html` är en designskiss, inte kopplad till Supabase
 - [ ] Byt `© 2026 Quotify AB · Stockholm` till rätt uppgifter innan lansering
 - [ ] Exempeloffertet genom hela sajten är en badrumsrenovering. Det fungerar som
