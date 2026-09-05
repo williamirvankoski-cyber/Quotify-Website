@@ -66,6 +66,10 @@ hämtar ingenting utifrån.
   under Authentication → Providers.
 - `dashboard.html` kräver inloggning och skickar tillbaka till `login.html`
   med `?next=` om man inte är inloggad.
+- **Kom ihåg mig** vid inloggningen avgör var sessionen sparas: ikryssad ger
+  localStorage (kvar när fliken stängs, gäller i alla flikar), urkryssad ger
+  sessionStorage (försvinner när fliken stängs). Rutan är ikryssad som förval.
+  Ingen automatisk utloggning efter inaktivitet.
 - Nya konton måste bekräfta sin mejladress. Supabases inbyggda utskick är
   hårt begränsat och bara till för test — koppla en egen SMTP-leverantör
   under Authentication → Emails innan riktiga kunder registrerar sig.

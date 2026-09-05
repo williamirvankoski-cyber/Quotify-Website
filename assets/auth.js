@@ -18,61 +18,76 @@ const SUPABASE_ANON_KEY = "sb_publishable_lr9e7kMeYIWx47R6-834DQ_LyQQGoCg";
 // redan borta — och då ser en lyckad Google-inloggning ut som ingen alls.
 const _adressVidStart = (window.location.hash || "") + (window.location.search || "");
 
-// Sessionen sparas i sessionStorage, inte localStorage. Skillnaden är precis
-// den vi vill ha: den överlever att man klickar runt på sajten, men försvinner
-// när fliken stängs. (Nackdel: öppnar man sajten i en NY flik är man utloggad
-// där, eftersom sessionStorage är privat per flik.)
+/* ---------- var sessionen sparas ---------- */
+
+// "Kom ihåg mig" avgör vilken lagring som används:
+//
+//   ikryssad  -> localStorage  : inloggningen finns kvar när fliken stängs,
+//                                och gäller i alla flikar samtidigt
+//   urkryssad -> sessionStorage: inloggningen försvinner när fliken stängs
+//
+// Valet görs i inloggningsrutan, alltså efter att klienten redan skapats.
+// Därför en egen lagringsadapter som bestämmer först när den läser eller
+// skriver, i stället för ett fast val vid start.
+
+const KOM_IHAG_NYCKEL = "quotify_kom_ihag";
+
+function komIhagValt() {
+  try {
+    return localStorage.getItem(KOM_IHAG_NYCKEL) !== "nej";
+  } catch (e) {
+    return false; // blockerad lagring: håll det till fliken
+  }
+}
+
+function sattKomIhag(pa) {
+  try {
+    localStorage.setItem(KOM_IHAG_NYCKEL, pa ? "ja" : "nej");
+  } catch (e) {
+    /* privat läge — då blir det sessionStorage ändå */
+  }
+}
+
+const minneslager = {
+  getItem(nyckel) {
+    // Läs från båda. En ihågkommen session ligger i localStorage; en
+    // flikbunden i sessionStorage. Vi vet inte vilken förrän vi tittat.
+    try {
+      const fran = localStorage.getItem(nyckel);
+      if (fran !== null) return fran;
+    } catch (e) {}
+    try {
+      return sessionStorage.getItem(nyckel);
+    } catch (e) {
+      return null;
+    }
+  },
+  setItem(nyckel, varde) {
+    try {
+      if (komIhagValt()) {
+        localStorage.setItem(nyckel, varde);
+        sessionStorage.removeItem(nyckel);
+      } else {
+        sessionStorage.setItem(nyckel, varde);
+        localStorage.removeItem(nyckel);
+      }
+    } catch (e) {}
+  },
+  removeItem(nyckel) {
+    // Vid utloggning ska den bort ur båda, annars kan en gammal ligga kvar.
+    try { localStorage.removeItem(nyckel); } catch (e) {}
+    try { sessionStorage.removeItem(nyckel); } catch (e) {}
+  },
+};
+
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    storage: window.sessionStorage,
+    storage: minneslager,
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
   },
 });
-
-/* ---------- automatisk utloggning vid inaktivitet ---------- */
-
-const INAKTIV_GRANS_MS = 20 * 60 * 1000; // 20 minuter
-const AKTIVITETSNYCKEL = "quotify_senaste_aktivitet";
-
-function noteraAktivitet() {
-  try {
-    sessionStorage.setItem(AKTIVITETSNYCKEL, String(Date.now()));
-  } catch (e) {
-    /* privat läge eller blockerad lagring — då får tiden räknas från sidladdning */
-  }
-}
-
-function inaktivForLange() {
-  try {
-    const senast = Number(sessionStorage.getItem(AKTIVITETSNYCKEL) || 0);
-    return senast > 0 && Date.now() - senast > INAKTIV_GRANS_MS;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Klick, tangenttryck, scroll och musrörelser räknas som liv. Att bara ha
-// sidan öppen gör det inte — då ska de 20 minuterna löpa ut.
-function startaInaktivitetsvakt() {
-  noteraAktivitet();
-  const handelser = ["click", "keydown", "scroll", "mousemove", "touchstart", "focus"];
-  let strypt = 0;
-  const pa = () => {
-    const nu = Date.now();
-    if (nu - strypt < 5000) return; // skriv inte till lagringen vid varje musrörelse
-    strypt = nu;
-    noteraAktivitet();
-  };
-  handelser.forEach((h) => window.addEventListener(h, pa, { passive: true }));
-
-  setInterval(async () => {
-    if (!inaktivForLange()) return;
-    const anv = await nuvarandeAnvandare();
-    if (anv) await loggaUt();
-  }, 30000);
-}
 
 /* ---------- språk ---------- */
 
@@ -306,13 +321,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     history.replaceState({}, "", window.location.pathname);
   }
 
-  // Har fliken legat orörd för länge sedan förra sidan? Ut direkt.
-  if (inaktivForLange() && (await nuvarandeAnvandare())) {
-    await loggaUt();
-    return;
-  }
-
-  startaInaktivitetsvakt();
   uppdateraNav();
 });
 

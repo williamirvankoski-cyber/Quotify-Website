@@ -180,6 +180,7 @@
       knapp.disabled = true;
       knapp.textContent = T.skapar;
       try {
+        sattKomIhag(true);
         var r = await registrera(epost, losen, foretag);
         if (r.behoverBekraftas) {
           visaBesked(besked, T.bekraftaMejl.replace('{e}', epost.trim()), 'ok');
@@ -200,7 +201,7 @@
       if (!k) return;
       k.addEventListener('click', async function () {
         doljBesked(besked);
-        try { await loggaInMedLeverantor(leverantor); }
+        try { sattKomIhag(true); await loggaInMedLeverantor(leverantor); }
         catch (err) { visaBesked(besked, err.message, 'fel'); }
       });
     }
