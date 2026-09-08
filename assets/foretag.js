@@ -38,6 +38,9 @@
     fel: "Kunde inte spara: ",
     namnKravs: "Företagsnamnet kan inte vara tomt.",
     saknas: "Det här saknas fortfarande: ",
+    felHamta: "Kunde inte hämta uppgifterna: ",
+    ingenProfil: "din profil hittades inte.",
+    ingetForetag: "företaget hittades inte.",
     klart: "Alla uppgifter är ifyllda."
   } : {
     rubrik: "Company",
@@ -64,6 +67,9 @@
     fel: "Couldn't save: ",
     namnKravs: "The company name can't be empty.",
     saknas: "Still missing: ",
+    felHamta: "Couldn't load your details: ",
+    ingenProfil: "your profile was not found.",
+    ingetForetag: "the company was not found.",
     klart: "Everything is filled in."
   };
 
@@ -235,12 +241,22 @@
     topp.appendChild(el("p", "font-size: 13.5px; color: #6E6560; margin: 0; max-width: 62ch; line-height: 1.6", T.ingress));
 
     // Företaget hämtas med alla kolumner här, inte bara de kontovyn delar.
+    // Går något fel ska sidan säga det — en tom sida utan förklaring är
+    // värre än ett felmeddelande.
     var profil = await db.from("profiles").select("company_id, namn").maybeSingle();
-    if (profil.error || !profil.data) return;
+    if (profil.error || !profil.data) {
+      QV.besked(document.getElementById("besked"),
+        T.felHamta + (profil.error ? profil.error.message : T.ingenProfil), "fel");
+      return;
+    }
     falt._profilnamn = profil.data.namn;
 
     var f = await db.from("companies").select("*").eq("id", profil.data.company_id).maybeSingle();
-    if (f.error || !f.data) return;
+    if (f.error || !f.data) {
+      QV.besked(document.getElementById("besked"),
+        T.felHamta + (f.error ? f.error.message : T.ingetForetag), "fel");
+      return;
+    }
     foretag = f.data;
 
     ritaStatus();
