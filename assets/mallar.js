@@ -22,10 +22,13 @@
     installningar: "Mallens uppgifter",
     logotyp: "Logotyp",
     logoHjalp: "PNG eller JPG. Visas uppe till vänster i offerten.",
+    standardLogo: "Ingen egen logotyp vald — Quotifys logotyp används. PNG eller JPG.",
     valjLogo: "Välj bild",
     taBortLogo: "Ta bort logotyp",
     farg: "Färg",
     fargHjalp: "Färgen på listen högst upp och nederst.",
+    foretagsnamn: "Företagsnamn",
+    foretagsnamnHjalp: "Visas i kontovyn och som avsändare i offerten.",
     referens: "Vår referens",
     referensHjalp: "Namnet som står som avsändare på offerten.",
     leverans: "Leveransvillkor",
@@ -61,10 +64,13 @@
     installningar: "Template details",
     logotyp: "Logo",
     logoHjalp: "PNG or JPG. Shown top left on the quote.",
+    standardLogo: "No logo of your own — Quotify's logo is used. PNG or JPG.",
     valjLogo: "Choose image",
     taBortLogo: "Remove logo",
     farg: "Colour",
     fargHjalp: "The colour of the bars at the top and bottom.",
+    foretagsnamn: "Company name",
+    foretagsnamnHjalp: "Shown in the account view and as the sender on the quote.",
     referens: "Our reference",
     referensHjalp: "The name shown as the sender on the quote.",
     leverans: "Delivery terms",
@@ -101,6 +107,19 @@
   var foretag = null;
   var exempelrader = [];
   var logotypBild = "";   // det som visas i förhandsgranskningen (data- eller signerad url)
+
+  // Relativ ljushet enligt WCAG — samma beräkning som roboten gör när den
+  // väljer textfärg ovanpå företagets färg i PDF:en.
+  function ljusFarg(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ""));
+    if (!m) return false;
+    var tal = parseInt(m[1], 16);
+    var kanal = [(tal >> 16) & 255, (tal >> 8) & 255, tal & 255].map(function (v) {
+      var d = v / 255;
+      return d <= 0.03928 ? d / 12.92 : Math.pow((d + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * kanal[0] + 0.7152 * kanal[1] + 0.0722 * kanal[2] > 0.45;
+  }
 
   function el(tagg, stil, text) {
     var e = document.createElement(tagg);
@@ -160,13 +179,22 @@
       bild.style.cssText = "max-width: 100%; max-height: 100%; object-fit: contain";
       ruta.appendChild(bild);
     } else {
-      ruta.appendChild(el("span", "font-size: 11.5px; color: #A3968F", T.logotyp));
+      // Ingen egen logotyp: rutan visar den som faktiskt används i stället.
+      var std = el("span", "font-size: 15px");
+      std.className = "qf-mark";
+      std.appendChild(document.createTextNode("Qu"));
+      var stdOrb = el("span");
+      stdOrb.className = "qf-mark__orb";
+      std.appendChild(stdOrb);
+      std.appendChild(document.createTextNode("tify"));
+      ruta.appendChild(std);
     }
     logorad.appendChild(ruta);
 
     var logotext = el("div", "min-width: 0");
     logotext.appendChild(el("div", "font-size: 12.5px; font-weight: 600", T.logotyp));
-    logotext.appendChild(el("div", "font-size: 12px; color: #6E6560; margin-top: 2px", T.logoHjalp));
+    logotext.appendChild(el("div", "font-size: 12px; color: #6E6560; margin-top: 2px",
+      (foretag && foretag.logo_url) ? T.logoHjalp : T.standardLogo));
     logorad.appendChild(logotext);
 
     var valj = knapp(T.valjLogo);
@@ -207,9 +235,11 @@
 
     // textfälten
     var rutnat = el("div", "display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px");
+    falt.namn = textfalt(foretag && foretag.namn);
     falt.referens = textfalt(foretag && foretag.referens);
     falt.leverans = textfalt(foretag && foretag.leveransvillkor);
     falt.betalning = textfalt(foretag && foretag.betalningsvillkor);
+    rutnat.appendChild(faltruta(T.foretagsnamn, T.foretagsnamnHjalp, falt.namn));
     rutnat.appendChild(faltruta(T.referens, T.referensHjalp, falt.referens));
     rutnat.appendChild(faltruta(T.leverans, "", falt.leverans));
     rutnat.appendChild(faltruta(T.betalning, "", falt.betalning));
@@ -226,7 +256,11 @@
     knappen.disabled = true;
     QV.besked(besked, T.sparar, "neutral");
 
+    var nyttNamn = falt.namn.value.trim();
+    if (!nyttNamn) { QV.besked(besked, T.fel + T.foretagsnamn, "fel"); knappen.disabled = false; return; }
+
     var r = await db.from("companies").update({
+      namn: nyttNamn,
       brandfarg: falt.farg.value,
       referens: falt.referens.value.trim() || null,
       leveransvillkor: falt.leverans.value.trim() || null,
@@ -236,6 +270,9 @@
     knappen.disabled = false;
     if (r.error) { QV.besked(besked, T.fel + r.error.message, "fel"); return; }
 
+    foretag.namn = nyttNamn;
+    var iSidan = document.getElementById("inloggad-som");
+    if (iSidan) iSidan.textContent = nyttNamn;
     foretag.brandfarg = falt.farg.value;
     foretag.referens = falt.referens.value.trim() || null;
     foretag.leveransvillkor = falt.leverans.value.trim() || null;
@@ -315,6 +352,9 @@
     // listen högst upp, med logotyp eller företagsnamn
     var list = el("div", "background: " + farg + "; min-height: 54px; display: flex; align-items: center; " +
       "justify-content: space-between; padding: 12px 20px; gap: 12px");
+    // Vit text på en ljus list går inte att läsa, så färgen följer listen.
+    var pafarg = ljusFarg(farg) ? "#1C1A19" : "#fff";
+
     if (logotypBild) {
       var b = document.createElement("img");
       b.src = logotypBild;
@@ -322,10 +362,18 @@
       b.style.cssText = "max-height: 32px; max-width: 150px; object-fit: contain";
       list.appendChild(b);
     } else {
-      list.appendChild(el("div", "color: #fff; font-family: Archivo, sans-serif; font-weight: 700; font-size: 15px",
-        (foretag && foretag.namn) || ""));
+      // Ingen egen logotyp: Quotifys ordmärke används, precis som i PDF:en.
+      var mark = el("span", "font-size: 20px; color: " + pafarg);
+      mark.className = "qf-mark";
+      mark.setAttribute("aria-label", "Quotify");
+      mark.appendChild(document.createTextNode("Qu"));
+      var orb = el("span");
+      orb.className = "qf-mark__orb";
+      mark.appendChild(orb);
+      mark.appendChild(document.createTextNode("tify"));
+      list.appendChild(mark);
     }
-    list.appendChild(el("div", "color: #fff; font-family: Archivo, sans-serif; font-weight: 800; " +
+    list.appendChild(el("div", "color: " + pafarg + "; font-family: Archivo, sans-serif; font-weight: 800; " +
       "font-size: 15px; letter-spacing: 0.12em", T.offert));
     papper.appendChild(list);
 

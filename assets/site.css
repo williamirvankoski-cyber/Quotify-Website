@@ -200,3 +200,17 @@
    det slår ut [hidden] om regeln inte är starkare. Utan raden nedan blir en
    gömd ruta synlig igen så fort den ritats en gång. */
 [hidden] { display: none !important; }
+
+/* --- Ordmärket ----------------------------------------------------------
+   "Quotify" i Archivo ExtraBold med o:et utbytt mot en glansig orb — samma
+   märke som panelen i Gmail använder. Orbens diameter är gemenernas x-höjd,
+   ~0.53em i Archivo, och sitter i em så att hela märket skalar med
+   font-size. Bokstäverna får inte spärras om och orben får inte flyttas. */
+.qf-mark { font-family: Archivo, sans-serif; font-weight: 800; letter-spacing: -0.045em;
+  color: #1C1A19; white-space: nowrap; line-height: 1; }
+.qf-mark__orb { display: inline-block; vertical-align: baseline; width: .53em; height: .53em;
+  margin: 0 .02em; border-radius: 999px;
+  background: radial-gradient(circle at 32% 26%, #FFFFFF 0%, #FFC5B2 38%, #E2553C 100%);
+  box-shadow: 0 0 .42em rgba(226, 85, 60, .45); }
+/* På mörk botten byter ordmärket färg; orben lämnas som den är. */
+.qf-mark--ljus { color: #fff; }
