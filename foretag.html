@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Företag — Quotify</title>
+<meta name="description" content="Företagets uppgifter, som står i sidfoten på varje offert.">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="alternate" hreflang="sv" href="foretag.html">
+<link rel="alternate" hreflang="en" href="en/foretag.html">
+<link rel="alternate" hreflang="x-default" href="foretag.html">
+</head>
+<body>
+<div style="background: #FFFCFB; color: #1C1A19; font-family: Karla, system-ui, sans-serif; min-height: 100vh; overflow-x: hidden">
+
+  <div style="border-bottom: 1px solid #F2EBE8; background: #fff; position: relative; z-index: 5">
+    <nav style="max-width: 1240px; margin: 0 auto; padding: 16px 40px; display: flex; align-items: center; gap: 34px; flex-wrap: wrap">
+      <a href="index.html" style="display: flex; align-items: center; gap: 10px; margin-right: auto">
+        <span class="qf-mark" style="font-size: 23px" aria-label="Quotify">Qu<span class="qf-mark__orb"></span>tify</span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 24px; font-size: 15px; font-weight: 500">
+        <a href="features.html">Funktioner</a>
+        <a href="how-it-works.html">Så fungerar det</a>
+        <a href="pricing.html">Priser</a>
+        <a href="integrations.html">Integrationer</a>
+        <a href="help.html">Hjälp</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <a href="en/foretag.html" class="lang-switch" hreflang="en" aria-label="Switch to English"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>EN</a>
+        <a href="login.html" style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; padding: 11px 22px; border-radius: 999px; border: 1.5px solid #E6DDD9"  class="hv-border-ink">Logga in</a>
+        <a href="signup.html" style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; padding: 12px 24px; border-radius: 999px; background: #1C1A19; color: #fff"  class="hv-coral-on">Prova gratis</a>
+      </div>
+    </nav>
+  </div>
+<div style="background: #FAF7F5; padding: 0 0 60px">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 30px 40px">
+      <div style="display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: 22px; align-items: start">
+        <div id="sidokolumn"></div>
+        <div style="display: grid; gap: 18px; min-width: 0">
+          <div id="topp"></div>
+          <div id="status" hidden></div>
+          <div id="besked" hidden></div>
+          <div id="formular"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+<footer style="border-top: 1px solid #F2EBE8; background: #fff">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 54px 40px 30px; display: grid; grid-template-columns: minmax(220px, 1.4fr) repeat(auto-fit, minmax(130px, 1fr)); gap: 34px">
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px">
+          <span class="qf-mark" style="font-size: 21px" aria-label="Quotify">Qu<span class="qf-mark__orb"></span>tify</span>
+        </div>
+        <p style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 16px; letter-spacing: -0.02em; margin: 0 0 18px; max-width: 22ch">Automatiska offerter, direkt i inkorgen.</p>
+        <div style="display: flex; gap: 6px; font-size: 13px; font-weight: 600">
+          <span style="padding: 6px 12px; border-radius: 999px; background: #1C1A19; color: #fff">Svenska</span>
+          <a href="en/foretag.html" hreflang="en" style="padding: 6px 12px; border-radius: 999px; color: #4B4442">English</a>
+        </div>
+      </div>
+      <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
+        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Produkt</div>
+        <a href="features.html">Funktioner</a>
+        <a href="how-it-works.html">Så fungerar det</a>
+        <a href="integrations.html">Integrationer</a>
+        <a href="pricing.html">Priser</a>
+      </div>
+      <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
+        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Företag</div>
+        <a href="about.html">Om oss</a>
+        <a href="contact.html">Kontakt</a>
+        <a href="signup.html">Prova gratis</a>
+      </div>
+      <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
+        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Support</div>
+        <a href="help.html">Hjälpcenter</a>
+        <a href="help.html">Kom igång-guide</a>
+        <a href="login.html">Logga in</a>
+      </div>
+      <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
+        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Juridik</div>
+        <a href="help.html">Integritetspolicy</a>
+        <a href="help.html">Villkor</a>
+        <a href="help.html">Personuppgiftsbiträde</a>
+      </div>
+    </div>
+    <div style="max-width: 1240px; margin: 0 auto; padding: 18px 40px 40px; border-top: 1px solid #F2EBE8; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; font-size: 13px; color: #6E6560">
+      <span>© 2026 Quotify AB · Stockholm</span>
+      <span>Byggt för dem som skickar offerter, inte för mjukvarufolk</span>
+    </div>
+  </footer>
+</div>
+
+
+
+<script src="assets/supabase.js"></script>
+<script src="assets/auth.js"></script>
+<script src="assets/kontovy.js"></script>
+<script src="assets/foretag.js"></script>
+</body>
+</html>

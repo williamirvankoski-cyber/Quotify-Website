@@ -100,6 +100,7 @@ const TXT = {
     losenSaknas: "Fyll i ett lösenord.",
     losenKort: "Lösenordet måste vara minst 10 tecken.",
     foretagSaknas: "Fyll i företagsnamnet.",
+    namnSaknas: "Fyll i ditt namn — det står som avsändare på offerterna.",
     fel: "Något gick fel. Försök igen.",
     felInlogg: "Fel mejladress eller lösenord.",
     epostFinns: "Det finns redan ett konto med den mejladressen.",
@@ -116,6 +117,7 @@ const TXT = {
     losenSaknas: "Enter a password.",
     losenKort: "The password must be at least 10 characters.",
     foretagSaknas: "Enter your company name.",
+    namnSaknas: "Enter your name — it appears as the sender on your quotes.",
     fel: "Something went wrong. Try again.",
     felInlogg: "Wrong email or password.",
     epostFinns: "An account with that email already exists.",
@@ -206,14 +208,24 @@ async function loggaInMedLosenord(epost, losenord) {
   return data;
 }
 
-async function registrera(epost, losenord, foretag) {
+async function registrera(epost, losenord, uppgifter) {
+  // uppgifter: { foretag, namn, orgnr, telefon }. Bara företag och namn är
+  // obligatoriska i formuläret; resten går att fylla i under Företag efteråt.
+  const u = uppgifter || {};
+  const text = (v) => String(v || "").trim();
+
   const { data, error } = await db.auth.signUp({
     email: epost.trim(),
     password: losenord,
     options: {
-      // Triggern hantera_ny_anvandare i databasen läser company_name härifrån
-      // och skapar företaget plus profilen automatiskt.
-      data: { company_name: (foretag || "").trim() },
+      // Triggern hantera_ny_anvandare i databasen läser de här fälten och
+      // skapar företaget plus profilen automatiskt.
+      data: {
+        company_name: text(u.foretag),
+        namn: text(u.namn),
+        orgnr: text(u.orgnr),
+        telefon: text(u.telefon),
+      },
       emailRedirectTo: absolutUrl("dashboard.html"),
     },
   });

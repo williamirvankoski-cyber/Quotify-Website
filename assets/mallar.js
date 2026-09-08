@@ -27,8 +27,6 @@
     taBortLogo: "Ta bort logotyp",
     farg: "Färg",
     fargHjalp: "Färgen på listen högst upp och nederst.",
-    foretagsnamn: "Företagsnamn",
-    foretagsnamnHjalp: "Visas i kontovyn och som avsändare i offerten.",
     referens: "Vår referens",
     referensHjalp: "Namnet som står som avsändare på offerten.",
     leverans: "Leveransvillkor",
@@ -69,8 +67,6 @@
     taBortLogo: "Remove logo",
     farg: "Colour",
     fargHjalp: "The colour of the bars at the top and bottom.",
-    foretagsnamn: "Company name",
-    foretagsnamnHjalp: "Shown in the account view and as the sender on the quote.",
     referens: "Our reference",
     referensHjalp: "The name shown as the sender on the quote.",
     leverans: "Delivery terms",
@@ -235,11 +231,9 @@
 
     // textfälten
     var rutnat = el("div", "display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px");
-    falt.namn = textfalt(foretag && foretag.namn);
     falt.referens = textfalt(foretag && foretag.referens);
     falt.leverans = textfalt(foretag && foretag.leveransvillkor);
     falt.betalning = textfalt(foretag && foretag.betalningsvillkor);
-    rutnat.appendChild(faltruta(T.foretagsnamn, T.foretagsnamnHjalp, falt.namn));
     rutnat.appendChild(faltruta(T.referens, T.referensHjalp, falt.referens));
     rutnat.appendChild(faltruta(T.leverans, "", falt.leverans));
     rutnat.appendChild(faltruta(T.betalning, "", falt.betalning));
@@ -256,11 +250,7 @@
     knappen.disabled = true;
     QV.besked(besked, T.sparar, "neutral");
 
-    var nyttNamn = falt.namn.value.trim();
-    if (!nyttNamn) { QV.besked(besked, T.fel + T.foretagsnamn, "fel"); knappen.disabled = false; return; }
-
     var r = await db.from("companies").update({
-      namn: nyttNamn,
       brandfarg: falt.farg.value,
       referens: falt.referens.value.trim() || null,
       leveransvillkor: falt.leverans.value.trim() || null,
@@ -270,9 +260,6 @@
     knappen.disabled = false;
     if (r.error) { QV.besked(besked, T.fel + r.error.message, "fel"); return; }
 
-    foretag.namn = nyttNamn;
-    var iSidan = document.getElementById("inloggad-som");
-    if (iSidan) iSidan.textContent = nyttNamn;
     foretag.brandfarg = falt.farg.value;
     foretag.referens = falt.referens.value.trim() || null;
     foretag.leveransvillkor = falt.leverans.value.trim() || null;

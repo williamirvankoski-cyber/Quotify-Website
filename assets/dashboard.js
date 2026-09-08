@@ -32,7 +32,10 @@
     fel: "Kunde inte hämta: ",
     laddaNer: "Ladda ner",
     ingenPdf: "PDF saknas",
-    heltHistorik: "Se hela historiken"
+    heltHistorik: "Se hela historiken",
+    saknasTitel: "Fyll i företagsuppgifterna",
+    saknasText: "Det här saknas fortfarande på offerterna: ",
+    saknasKnapp: "Fyll i nu"
   } : {
     rubrik: "Quotes",
     sok: "Customer or subject",
@@ -54,7 +57,10 @@
     fel: "Couldn't load: ",
     laddaNer: "Download",
     ingenPdf: "No PDF",
-    heltHistorik: "See the full history"
+    heltHistorik: "See the full history",
+    saknasTitel: "Complete your company details",
+    saknasText: "These are still missing from your quotes: ",
+    saknasKnapp: "Fill them in"
   };
 
   var KORT = "border: 1px solid #F2EBE8; border-radius: 24px; background: #fff";
@@ -70,6 +76,39 @@
     if (stil) e.style.cssText = stil;
     if (text !== undefined) e.textContent = text;
     return e;
+  }
+
+  // Samma lista som Företag-sidan använder. En offert utan organisationsnummer
+  // och adress ser inte ut att komma från ett företag.
+  function saknade(f) {
+    var krav = SV
+      ? [["orgnr", "organisationsnummer"], ["telefon", "telefon"], ["adress", "adress"],
+         ["postnummer", "postnummer"], ["ort", "ort"]]
+      : [["orgnr", "registration number"], ["telefon", "phone"], ["adress", "address"],
+         ["postnummer", "postcode"], ["ort", "city"]];
+    return krav.filter(function (p) { return !(f && f[p[0]]); }).map(function (p) { return p[1]; });
+  }
+
+  function ritaPaminnelse(foretag) {
+    var kvar = saknade(foretag);
+    var ruta = document.getElementById("besked");
+    if (!kvar.length) { ruta.hidden = true; return; }
+
+    ruta.hidden = false;
+    ruta.textContent = "";
+    ruta.style.cssText = "display: flex; flex-wrap: wrap; align-items: center; gap: 12px; " +
+      "padding: 15px 18px; border-radius: 20px; background: #FFF6E9; color: #7A5313";
+
+    var text = el("div", "min-width: 0; margin-right: auto");
+    text.appendChild(el("div", "font-weight: 700; font-size: 14px", T.saknasTitel));
+    text.appendChild(el("div", "font-size: 13px; margin-top: 2px", T.saknasText + kvar.join(", ")));
+    ruta.appendChild(text);
+
+    var lank = el("a", "font-family: Archivo, sans-serif; font-weight: 600; font-size: 13.5px; " +
+      "padding: 9px 17px; border-radius: 999px; background: #1C1A19; color: #fff; white-space: nowrap",
+      T.saknasKnapp);
+    lank.href = "foretag.html";
+    ruta.appendChild(lank);
   }
 
   function ritaTopp() {
@@ -211,6 +250,7 @@
     if (!start) return;
 
     ritaTopp();
+    ritaPaminnelse(start.foretag);
     ritaNyckeltal();
     document.getElementById("lista").appendChild(QV.tomruta(T.hamtar, ""));
 

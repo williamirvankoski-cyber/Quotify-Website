@@ -22,6 +22,7 @@
     katalog: '<path d="M3 3h18v18H3z"></path><path d="M3 9h18M3 15h18M9 3v18M15 3v18"></path>',
     mallar: '<path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path>',
     historik: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2.5"></path>',
+    foretag: '<path d="M3 21h18"></path><path d="M5 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16"></path><path d="M13 9h5a1 1 0 0 1 1 1v11"></path><path d="M8 8h1M8 12h1M8 16h1"></path>',
     hjalp: '<circle cx="12" cy="12" r="9"></circle><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7"></path><path d="M12 17h.01"></path>',
     utloggning: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path>'
   };
@@ -30,7 +31,8 @@
     { id: "offerter", fil: "dashboard.html", sv: "Offerter", en: "Quotes" },
     { id: "katalog", fil: "katalog.html", sv: "Katalog", en: "Catalogue" },
     { id: "mallar", fil: "mallar.html", sv: "Mallar", en: "Templates" },
-    { id: "historik", fil: "historik.html", sv: "Historik", en: "History" }
+    { id: "historik", fil: "historik.html", sv: "Historik", en: "History" },
+    { id: "foretag", fil: "foretag.html", sv: "Företag", en: "Company" }
   ];
 
   function ikon(namn) {
@@ -160,9 +162,11 @@
     var profil = await db.from("profiles").select("company_id").maybeSingle();
     if (profil.error || !profil.data) return null;
 
+    // Alla kolumner: startsidan kontrollerar om företagsuppgifterna är
+    // ifyllda, och Mallar behöver logotyp och färg.
     var f = await db
       .from("companies")
-      .select("id, namn, logo_url, brandfarg, referens, leveransvillkor, betalningsvillkor")
+      .select("*")
       .eq("id", profil.data.company_id)
       .maybeSingle();
 
