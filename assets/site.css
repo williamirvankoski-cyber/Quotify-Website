@@ -214,3 +214,30 @@
   box-shadow: 0 0 .42em rgba(226, 85, 60, .45); }
 /* På mörk botten byter ordmärket färg; orben lämnas som den är. */
 .qf-mark--ljus { color: #fff; }
+
+/* --- Navigering mellan sidor ---------------------------------------------
+   Sidorna är egna dokument, så varje klick är en riktig sidladdning. Två
+   saker gör att det ändå känns sammanhängande i stället för hackigt.
+
+   1. Bakgrundsfärgen sitter på html-elementet. Utan den målar webbläsaren
+      vitt i glappet mellan gammal och ny sida, vilket syns som en blink.
+   2. View transitions låter Chrome tona över mellan sidorna i stället för
+      att klippa. Webbläsare som inte kan det får som förut — inget går
+      sönder, övergången uteblir bara. */
+html { background: #FFFCFB; }
+
+@view-transition { navigation: auto; }
+
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: .18s; }
+
+/* Den som bett om mindre rörelse i systemet ska inte få någon övergång alls. */
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+/* Innehållsytan har en höjd redan innan JavaScript hunnit fylla den, så
+   sidfoten inte hoppar nedåt när korten dyker upp. */
+#formular:empty, #lista:empty, #artikelkort:empty, #installningar:empty { min-height: 220px; }
+#nyckeltal:empty { min-height: 96px; }
+#topp:empty { min-height: 44px; }

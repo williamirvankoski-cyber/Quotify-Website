@@ -212,6 +212,7 @@
     knappen.disabled = false;
     if (p.error) { QV.besked(besked, T.fel + p.error.message, "fel"); return; }
 
+    QV.glomForetag();
     foretag.namn = namn;
     foretag.orgnr = eller(falt.orgnr.value);
     foretag.telefon = eller(falt.telefon.value);

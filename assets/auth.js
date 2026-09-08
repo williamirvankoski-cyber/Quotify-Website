@@ -337,6 +337,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function loggaUt() {
+  // Den sparade kopian av företaget hör till den som loggar ut.
+  try { sessionStorage.removeItem("quotify-foretag"); } catch (e) {}
   await db.auth.signOut();
   window.location.href = absolutUrl("login.html");
 }

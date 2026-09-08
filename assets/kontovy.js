@@ -51,7 +51,7 @@
 
     var html = '<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; ' +
       'text-transform: uppercase; color: #756B66; padding: 6px 12px 12px; line-height: 1.5; ' +
-      'overflow-wrap: anywhere; word-break: break-word" id="inloggad-som">—</div>';
+      'overflow-wrap: anywhere; word-break: break-word; min-height: 1em" id="inloggad-som"></div>';
 
     POSTER.forEach(function (p) {
       var text = SV ? p.sv : p.en;
@@ -152,12 +152,48 @@
 
   /* ---------- företaget man tillhör ---------- */
 
-  // Sparas efter första anropet: alla sidor behöver id:t, och det ändras inte
-  // under ett besök.
+  // Att slå upp företaget kostar två anrop i följd: först profilen, sedan
+  // företaget. Görs det om på varje sida står användaren och väntar i onödan
+  // varje gång hen klickar i sidokolumnen. Svaret sparas därför i fliken och
+  // återanvänds tills något ändrar det.
   var _foretag = null;
+  var NYCKEL = "quotify-foretag";
 
-  async function mittForetag() {
+  function franFliken() {
+    try {
+      var rå = sessionStorage.getItem(NYCKEL);
+      if (!rå) return null;
+      var sparad = JSON.parse(rå);
+      // Bara den inloggades eget företag, och inget som hunnit bli gammalt.
+      if (!sparad || Date.now() - sparad.tid > 5 * 60 * 1000) return null;
+      return sparad;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function tillFliken(anvandarId, foretag) {
+    try {
+      sessionStorage.setItem(NYCKEL, JSON.stringify({
+        tid: Date.now(), anvandare: anvandarId, foretag: foretag
+      }));
+    } catch (e) {}
+  }
+
+  // Anropas när något sparats som gör den sparade kopian felaktig.
+  function glomForetag() {
+    _foretag = null;
+    try { sessionStorage.removeItem(NYCKEL); } catch (e) {}
+  }
+
+  async function mittForetag(anvandarId) {
     if (_foretag) return _foretag;
+
+    var sparad = franFliken();
+    if (sparad && (!anvandarId || sparad.anvandare === anvandarId)) {
+      _foretag = sparad.foretag;
+      return _foretag;
+    }
 
     var profil = await db.from("profiles").select("company_id").maybeSingle();
     if (profil.error || !profil.data) return null;
@@ -172,6 +208,7 @@
 
     if (f.error || !f.data) return null;
     _foretag = f.data;
+    if (anvandarId) tillFliken(anvandarId, _foretag);
     return _foretag;
   }
 
@@ -186,13 +223,25 @@
     el.textContent = namn;
   }
 
-  // Varje sida börjar likadant: kräv inloggning, rita sidokolumnen, hämta
-  // företaget. Returnerar null om användaren skickades till inloggningen.
+  // Varje sida börjar likadant. Ordningen spelar roll för hur det känns:
+  // sidokolumnen ritas direkt, innan något väntas in, så att sidan står
+  // färdig medan inloggningen kontrolleras. Görs det efteråt hoppar menyn
+  // fram en stund efter att resten av sidan redan syns.
   async function startaSida(aktiv) {
+    ritaSidokolumn(aktiv);
+
+    // Företagsnamnet finns oftast redan i fliken sedan förra sidan.
+    var sparad = franFliken();
+    if (sparad) {
+      _foretag = sparad.foretag;
+      var namnEl = document.getElementById("inloggad-som");
+      if (namnEl && sparad.foretag && sparad.foretag.namn) namnEl.textContent = sparad.foretag.namn;
+    }
+
     var anv = await kravInloggning();
     if (!anv) return null;
-    ritaSidokolumn(aktiv);
-    var foretag = await mittForetag();
+
+    var foretag = await mittForetag(anv.id);
     visaInloggad(anv, foretag);
     return { anvandare: anv, foretag: foretag };
   }
@@ -201,6 +250,7 @@
     SV: SV,
     startaSida: startaSida,
     mittForetag: mittForetag,
+    glomForetag: glomForetag,
     ritaSidokolumn: ritaSidokolumn,
     kr: kr,
     tid: tid,

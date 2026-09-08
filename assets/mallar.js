@@ -204,6 +204,7 @@
         bort.disabled = true;
         var r = await db.from("companies").update({ logo_url: null }).eq("id", foretag.id);
         if (r.error) { QV.besked(document.getElementById("besked"), T.fel + r.error.message, "fel"); bort.disabled = false; return; }
+        QV.glomForetag();
         foretag.logo_url = null;
         logotypBild = "";
         ritaInstallningar();
@@ -260,6 +261,7 @@
     knappen.disabled = false;
     if (r.error) { QV.besked(besked, T.fel + r.error.message, "fel"); return; }
 
+    QV.glomForetag();
     foretag.brandfarg = falt.farg.value;
     foretag.referens = falt.referens.value.trim() || null;
     foretag.leveransvillkor = falt.leverans.value.trim() || null;
@@ -281,6 +283,7 @@
       var r = await db.from("companies").update({ logo_url: "storage:" + vag }).eq("id", foretag.id);
       if (r.error) throw new Error(r.error.message);
 
+      QV.glomForetag();
       foretag.logo_url = "storage:" + vag;
       await laddaLogotypBild();
       ritaInstallningar();
