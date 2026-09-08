@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Offerter — Quotify</title>
-<meta name="description" content="Era offerter, deras status, och detaljerna i varje utkast.">
-<link rel="stylesheet" href="assets/site.css">
-<link rel="alternate" hreflang="sv" href="dashboard.html">
-<link rel="alternate" hreflang="en" href="en/dashboard.html">
-<link rel="alternate" hreflang="x-default" href="dashboard.html">
+<title>Templates — Quotify</title>
+<meta name="description" content="How the quotes Quotify sends out look.">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="alternate" hreflang="sv" href="../mallar.html">
+<link rel="alternate" hreflang="en" href="mallar.html">
+<link rel="alternate" hreflang="x-default" href="../mallar.html">
 </head>
 <body>
 <div style="background: #FFFCFB; color: #1C1A19; font-family: Karla, system-ui, sans-serif; min-height: 100vh; overflow-x: hidden">
@@ -22,16 +22,16 @@
         <span style="font-family: Archivo, sans-serif; font-weight: 800; font-size: 23px; letter-spacing: -0.035em">Quotify</span>
       </a>
       <div style="display: flex; align-items: center; gap: 24px; font-size: 15px; font-weight: 500">
-        <a href="features.html">Funktioner</a>
-        <a href="how-it-works.html">Så fungerar det</a>
-        <a href="pricing.html">Priser</a>
-        <a href="integrations.html">Integrationer</a>
-        <a href="help.html">Hjälp</a>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="integrations.html">Integrations</a>
+        <a href="help.html">Help</a>
       </div>
       <div style="display: flex; align-items: center; gap: 10px">
-        <a href="en/dashboard.html" class="lang-switch" hreflang="en" aria-label="Switch to English"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>EN</a>
-        <a href="login.html" style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; padding: 11px 22px; border-radius: 999px; border: 1.5px solid #E6DDD9"  class="hv-border-ink">Logga in</a>
-        <a href="signup.html" style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; padding: 12px 24px; border-radius: 999px; background: #1C1A19; color: #fff"  class="hv-coral-on">Prova gratis</a>
+        <a href="../mallar.html" class="lang-switch" hreflang="sv" aria-label="Byt till svenska"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>SV</a>
+        <a href="login.html" style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; padding: 11px 22px; border-radius: 999px; border: 1.5px solid #E6DDD9"  class="hv-border-ink">Log in</a>
+        <a href="signup.html" style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; padding: 12px 24px; border-radius: 999px; background: #1C1A19; color: #fff"  class="hv-coral-on">Start free trial</a>
       </div>
     </nav>
   </div>
@@ -42,8 +42,10 @@
         <div style="display: grid; gap: 18px; min-width: 0">
           <div id="topp"></div>
           <div id="besked" hidden></div>
-          <div id="nyckeltal"></div>
-          <div id="lista"></div>
+          <div id="mallkort"></div>
+          <div id="installningar"></div>
+          <div id="forhands"></div>
+          <input type="file" id="logovaljare" accept="image/png,image/jpeg,image/webp" hidden>
 
         </div>
       </div>
@@ -58,49 +60,49 @@
           </span>
           <span style="font-family: Archivo, sans-serif; font-weight: 800; font-size: 21px; letter-spacing: -0.035em">Quotify</span>
         </div>
-        <p style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 16px; letter-spacing: -0.02em; margin: 0 0 18px; max-width: 22ch">Automatiska offerter, direkt i inkorgen.</p>
+        <p style="font-family: Archivo, sans-serif; font-weight: 600; font-size: 16px; letter-spacing: -0.02em; margin: 0 0 18px; max-width: 22ch">Automated quoting, in your inbox.</p>
         <div style="display: flex; gap: 6px; font-size: 13px; font-weight: 600">
-          <span style="padding: 6px 12px; border-radius: 999px; background: #1C1A19; color: #fff">Svenska</span>
-          <a href="en/dashboard.html" hreflang="en" style="padding: 6px 12px; border-radius: 999px; color: #4B4442">English</a>
+          <span style="padding: 6px 12px; border-radius: 999px; background: #1C1A19; color: #fff">English</span>
+          <a href="../mallar.html" hreflang="sv" style="padding: 6px 12px; border-radius: 999px; color: #4B4442">Svenska</a>
         </div>
       </div>
       <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
-        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Produkt</div>
-        <a href="features.html">Funktioner</a>
-        <a href="how-it-works.html">Så fungerar det</a>
-        <a href="integrations.html">Integrationer</a>
-        <a href="pricing.html">Priser</a>
+        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Product</div>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="integrations.html">Integrations</a>
+        <a href="pricing.html">Pricing</a>
       </div>
       <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
-        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Företag</div>
-        <a href="about.html">Om oss</a>
-        <a href="contact.html">Kontakt</a>
-        <a href="signup.html">Prova gratis</a>
+        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Company</div>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="signup.html">Start free trial</a>
       </div>
       <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
         <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Support</div>
-        <a href="help.html">Hjälpcenter</a>
-        <a href="help.html">Kom igång-guide</a>
-        <a href="login.html">Logga in</a>
+        <a href="help.html">Help centre</a>
+        <a href="help.html">Setup guide</a>
+        <a href="login.html">Log in</a>
       </div>
       <div style="display: grid; gap: 10px; align-content: start; font-size: 14.5px">
-        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Juridik</div>
-        <a href="help.html">Integritetspolicy</a>
-        <a href="help.html">Villkor</a>
-        <a href="help.html">Personuppgiftsbiträde</a>
+        <div style="font-family: Archivo, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6560; margin-bottom: 2px">Legal</div>
+        <a href="help.html">Privacy</a>
+        <a href="help.html">Terms</a>
+        <a href="help.html">Data processing</a>
       </div>
     </div>
     <div style="max-width: 1240px; margin: 0 auto; padding: 18px 40px 40px; border-top: 1px solid #F2EBE8; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; font-size: 13px; color: #6E6560">
       <span>© 2026 Quotify AB · Stockholm</span>
-      <span>Byggt för dem som skickar offerter, inte för mjukvarufolk</span>
+      <span>Built for people who send quotes, not software</span>
     </div>
   </footer>
 </div>
 
 
-<script src="assets/supabase.js"></script>
-<script src="assets/auth.js"></script>
-<script src="assets/kontovy.js"></script>
-<script src="assets/dashboard.js"></script>
+<script src="../assets/supabase.js"></script>
+<script src="../assets/auth.js"></script>
+<script src="../assets/kontovy.js"></script>
+<script src="../assets/mallar.js"></script>
 </body>
 </html>

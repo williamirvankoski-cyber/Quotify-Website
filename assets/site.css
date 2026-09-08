@@ -195,3 +195,8 @@
   border: 1.5px solid #F2EBE8; transition: border-color .18s ease, color .18s ease; }
 .lang-switch:hover { border-color: #1C1A19; color: #1C1A19; }
 .lang-switch svg { flex: none; }
+
+/* Sidor som byggs av JavaScript sätter ofta display i en style-attribut, och
+   det slår ut [hidden] om regeln inte är starkare. Utan raden nedan blir en
+   gömd ruta synlig igen så fort den ritats en gång. */
+[hidden] { display: none !important; }
