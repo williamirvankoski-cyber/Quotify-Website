@@ -2,7 +2,7 @@
  * Quotify — Historik.
  *
  * Alla offerter någonsin, grupperade månad för månad. Här sätts också
- * offertens tillstånd: utkast, skickad eller förlorad. Det är samma
+ * offertens tillstånd: utkast eller skickad. Det är samma
  * kolumn som flikarna på startsidan filtrerar på, så en ändring här syns
  * direkt där.
  */
@@ -18,7 +18,6 @@
     alla: "Alla",
     utkast: "Utkast",
     skickad: "Skickade",
-    forlorad: "Förlorade",
     tomTitel: "Inget att visa än",
     tomText: "Här samlas alla offerter Quotify tagit fram, månad för månad.",
     ingaTraffar: "Ingen offert matchar filtret.",
@@ -39,7 +38,6 @@
     alla: "All",
     utkast: "Drafts",
     skickad: "Sent",
-    forlorad: "Lost",
     tomTitel: "Nothing here yet",
     tomText: "Every quote Quotify builds collects here, month by month.",
     ingaTraffar: "No quote matches the filter.",
@@ -56,10 +54,11 @@
     ingenPdf: "No PDF"
   };
 
+  // Två lägen räcker: offerten är antingen ett utkast som väntar, eller
+  // skickad av företaget. Quotify skickar inget själv.
   var TILLSTAND = [
     { id: "utkast", text: T.utkast },
-    { id: "skickad", text: T.skickad },
-    { id: "forlorad", text: T.forlorad }
+    { id: "skickad", text: T.skickad }
   ];
 
   var KORT = "border: 1px solid #F2EBE8; border-radius: 24px; background: #fff";
