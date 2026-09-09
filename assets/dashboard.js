@@ -24,7 +24,6 @@
     alla: "Alla",
     utkast: "Utkast",
     skickad: "Skickade",
-    vunnen: "Vunna",
     tomTitel: "Inga offerter än",
     tomText: "Här hamnar offerterna Quotify tar fram ur dina mail.",
     ingaTraffar: "Ingen offert matchar filtret.",
@@ -49,7 +48,6 @@
     alla: "All",
     utkast: "Drafts",
     skickad: "Sent",
-    vunnen: "Won",
     tomTitel: "No quotes yet",
     tomText: "This is where the quotes Quotify builds from your mail appear.",
     ingaTraffar: "No quote matches the filter.",
@@ -176,7 +174,7 @@
     var flikar = el("div", "display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; " +
       "border-bottom: 1px solid #F2EBE8");
     [{ id: "alla", text: T.alla }, { id: "utkast", text: T.utkast },
-     { id: "skickad", text: T.skickad }, { id: "vunnen", text: T.vunnen }].forEach(function (f) {
+     { id: "skickad", text: T.skickad }].forEach(function (f) {
       var b = el("button", null, f.text);
       b.type = "button";
       var pa = vald === f.id;

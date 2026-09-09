@@ -2,7 +2,7 @@
  * Quotify — Historik.
  *
  * Alla offerter någonsin, grupperade månad för månad. Här sätts också
- * offertens tillstånd: utkast, skickad, vunnen eller förlorad. Det är samma
+ * offertens tillstånd: utkast, skickad eller förlorad. Det är samma
  * kolumn som flikarna på startsidan filtrerar på, så en ändring här syns
  * direkt där.
  */
@@ -18,7 +18,6 @@
     alla: "Alla",
     utkast: "Utkast",
     skickad: "Skickade",
-    vunnen: "Vunna",
     forlorad: "Förlorade",
     tomTitel: "Inget att visa än",
     tomText: "Här samlas alla offerter Quotify tagit fram, månad för månad.",
@@ -40,7 +39,6 @@
     alla: "All",
     utkast: "Drafts",
     skickad: "Sent",
-    vunnen: "Won",
     forlorad: "Lost",
     tomTitel: "Nothing here yet",
     tomText: "Every quote Quotify builds collects here, month by month.",
@@ -61,7 +59,6 @@
   var TILLSTAND = [
     { id: "utkast", text: T.utkast },
     { id: "skickad", text: T.skickad },
-    { id: "vunnen", text: T.vunnen },
     { id: "forlorad", text: T.forlorad }
   ];
 
@@ -144,7 +141,14 @@
       o2.textContent = t.text;
       s.appendChild(o2);
     });
-    s.value = o.tillstand || "utkast";
+    var nuvarande = o.tillstand || "utkast";
+    if (!TILLSTAND.some(function (t) { return t.id === nuvarande; })) {
+      var okant = document.createElement("option");
+      okant.value = nuvarande;
+      okant.textContent = nuvarande;
+      s.appendChild(okant);
+    }
+    s.value = nuvarande;
     s.addEventListener("change", async function () {
       var tidigare = o.tillstand;
       o.tillstand = s.value;
